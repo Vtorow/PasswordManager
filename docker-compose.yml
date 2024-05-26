@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx
+    container_name: "passman-nginx"
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - frontend
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+
+  backend:
+    container_name: "passman-backend"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: docker/.env
+    restart: unless-stopped
+    volumes:
+      - ./passman:/passman/passman
+    depends_on:
+      database:
+        condition: service_started
+
+  database:
+    container_name: "passman-db"
+    image: postgres:15.1-alpine
+    env_file: docker/.env
+    restart: unless-stopped
+    volumes:
+      - kitchenView_data:/var/lib/postgresql/data
+
+  frontend:
+    container_name: "passman-frontend"
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    env_file: docker/.env
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  kitchenView_data:
