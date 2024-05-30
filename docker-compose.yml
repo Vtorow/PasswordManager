@@ -31,7 +31,7 @@ services:
     env_file: docker/.env
     restart: unless-stopped
     volumes:
-      - kitchenView_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
 
   frontend:
     container_name: "passman-frontend"
@@ -44,4 +44,4 @@ services:
       - backend
 
 volumes:
-  kitchenView_data:
+  db_data:
